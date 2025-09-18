@@ -29,11 +29,21 @@ MOCK_USER_INPUT = {
 # since we only want to test the config flow. We test the
 # actual functionality of the integration in other test modules.
 @pytest.fixture(autouse=True)
-def bypass_setup_fixture():
+def bypass_setup_fixture(hass):
     """Prevent setup."""
-    with patch(
-        "custom_components.bestway.async_setup_entry",
-        return_value=True,
+    async def _mock_async_setup_entry(hass, entry):
+        hass.data.setdefault(DOMAIN, {})[entry.entry_id] = object()
+        return True
+
+    with (
+        patch(
+            "custom_components.bestway.async_setup_entry",
+            side_effect=_mock_async_setup_entry,
+        ),
+        patch(
+            "custom_components.bestway.async_unload_entry",
+            return_value=True,
+        ),
     ):
         yield
 

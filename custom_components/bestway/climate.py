@@ -266,9 +266,11 @@ class AirjetV01HydrojetSpaThermostat(BestwayEntity, ClimateEntity):
             return
 
         if hvac_mode := kwargs.get(ATTR_HVAC_MODE):
-            should_heat = hvac_mode == HVACMode.HEAT
+            heat_mode = (
+                HydrojetHeat.ON if hvac_mode == HVACMode.HEAT else HydrojetHeat.OFF
+            )
             await self.coordinator.api.hydrojet_spa_set_heat(
-                self.device_id, should_heat
+                self.device_id, heat_mode
             )
 
         await self.coordinator.api.hydrojet_spa_set_target_temp(

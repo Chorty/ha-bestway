@@ -2,6 +2,8 @@
 
 from unittest.mock import patch
 
+import pycares
+
 import pytest
 
 pytest_plugins = "pytest_homeassistant_custom_component"
@@ -12,6 +14,16 @@ pytest_plugins = "pytest_homeassistant_custom_component"
 @pytest.fixture(autouse=True)
 def auto_enable_custom_integrations(enable_custom_integrations):
     """Enable loading custom integrations."""
+    yield
+
+
+@pytest.fixture(autouse=True)
+def disable_pycares_shutdown_thread(monkeypatch):
+    """Prevent pycares from spawning a lingering shutdown thread during tests."""
+
+    monkeypatch.setattr(
+        pycares._ChannelShutdownManager, "start", lambda self: None
+    )
     yield
 
 
