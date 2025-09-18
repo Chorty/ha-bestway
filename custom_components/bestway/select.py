@@ -130,3 +130,4 @@ class ThreeWaySpaBubblesSelect(BestwayEntity, SelectEntity):
         await self.entity_description.set_fn(
             self.coordinator.api, self.device_id, bubbles_level
         )
+        await self.coordinator.async_refresh()
